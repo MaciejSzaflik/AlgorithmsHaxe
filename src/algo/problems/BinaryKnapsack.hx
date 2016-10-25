@@ -53,6 +53,31 @@ class BinaryKnapsack
 		return binary;
 	}
 	
+	public function generateRandomSolution():Result
+	{
+		var v = new Vector<Bool>(values.length);
+		var index = 0;
+		var sum = 0;
+		var valueSum = 0;
+		while (index < v.length)
+		{
+			var result = Random.bool();
+			if (result)
+			{
+				v[index] = (weights[index] + sum <= capacity);
+				if (v[index])
+				{
+					sum += weights[index];
+					valueSum += values[index];
+				}
+			}
+			else
+				v[index] = false;
+			index++;
+		}
+		return new Result(v,valueSum,sum);
+	}
+	
 	public function evaluateValue(items:Vector<Bool>):Int
 	{
 		var sum = 0;

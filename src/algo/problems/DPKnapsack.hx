@@ -8,7 +8,7 @@ import haxe.ds.Vector;
 class DPKnapsack
 {
 
-	public static function solve(knapsack:BinaryKnapsack):Vector<Bool>
+	public static function solve(knapsack:BinaryKnapsack):Result
 	{
 		var n = knapsack.values.length;
 		var W = knapsack.capacity;
@@ -50,7 +50,8 @@ class DPKnapsack
 			}
 			i++;
 		}
-		return traceResult(knapsack, rows);
+		var vector = traceResult(knapsack, rows);
+		return new Result(vector, knapsack.evaluateValue(vector));
 	}
 	
 	public static function traceResult(knapsack:BinaryKnapsack,table:Vector<Vector<Int>>):Vector<Bool>

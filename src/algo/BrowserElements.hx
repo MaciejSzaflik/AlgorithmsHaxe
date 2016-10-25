@@ -1,6 +1,7 @@
 package algo;
 import algo.problems.BinaryKnapsack;
 import algo.problems.DPKnapsack;
+import algo.problems.RandomSearch;
 import haxe.Constraints.Function;
 import js.Browser;
 import js.html.ButtonElement;
@@ -17,11 +18,18 @@ class BrowserElements
 	var valuePara:ParagraphElement;
 	var resultPara:ParagraphElement;
 	
+	var testOnePara:ParagraphElement;
+	var randomSearchPara:ParagraphElement;
+	
 	var weightInput:InputElement;
 	var valueInput:InputElement;
 	var capacityInput:InputElement;
 	var countInput:InputElement;
+	var iterationInput:InputElement;
 	
+	var instance:BinaryKnapsack;
+	var checkboxGenerate:InputElement;
+	var keepCreated:InputElement;
 	public function new() 
 	{
 		addParagraph("DP Binary Knapsack Solver");
@@ -33,27 +41,91 @@ class BrowserElements
 		capacityInput = addInputElement("750");
 		addParagraph("Elements Count (only for generation):");
 		countInput = addInputElement("5");
+		addParagraph("Iteration counter (only for meta):");
+		iterationInput = addInputElement("2000");
+		
 		
 		Browser.document.body.appendChild(Browser.document.createHRElement());
-		addButton("calculate",function(event) {
+		addButton("calculate DP", function(event) {
+			creationDecide();
 			calculate();
         });
-		addButton("generate",function(event) {
-			generate();
+		checkboxGenerate = Browser.document.createInputElement();
+		checkboxGenerate.type = "checkbox";
+		checkboxGenerate.title = "generate";
+		Browser.document.body.appendChild(checkboxGenerate);
+		
+		keepCreated = Browser.document.createInputElement();
+		keepCreated.type = "checkbox";
+		keepCreated.title = "keep";
+		Browser.document.body.appendChild(keepCreated);
+		
+		addButton("test", function(event) {
+			creationDecide();
+			generateOneAndPrint();
+        });
+		addButton("random search", function(event) {
+			creationDecide();
+			randomSearchInput();
+        });
+		addButton("random search", function(event) {
+			creationDecide();
+			randomSearchInput();
         });
 	}
-	public function generate()
+	
+	private function creationDecide()
+	{
+		if (keepCreated.checked && instance != null)
+			return;
+		if (checkboxGenerate.checked)
+			parseAndRandom();
+		else
+			parseAndFromValues();
+	}
+	
+	public function randomSearchInput()
+	{
+		var iterations = Std.parseInt(iterationInput.value);
+		var randomSearch = new RandomSearch(instance);
+		var result = randomSearch.solve(iterations,true);
+		if (randomSearchPara == null)
+		{
+			randomSearchPara = addParagraph();
+			Browser.document.body.appendChild(Browser.document.createHRElement());
+		}
+		randomSearchPara.textContent = "R: " + result.value  + " || I: " + result.resultVector + " || W:" + result.weight;
+		fillGraphWithHistory(randomSearch.history);
+	}
+	
+	private function fillGraphWithHistory(history:Array<Int>)
+	{
+		var h = Reflect.field(Browser.window, "data");
+		
+		var strings = new Array<String>();
+		var index = 1;
+		for (value in history)
+		{
+			strings.push(index + "");
+			index++;
+		}
+		h.labels = strings;
+		h.series[0] = history;
+		untyped __js__("init()");
+	}
+	
+	
+	public function parseAndRandom()
 	{
 		var randsW = weightInput.value.split(",").map(function(f) return Std.parseInt(f));
-		var randsV = weightInput.value.split(",").map(function(f) return Std.parseInt(f));
+		var randsV = valueInput.value.split(",").map(function(f) return Std.parseInt(f));
 		var capacity = Std.parseInt(capacityInput.value);
 		var count = Std.parseInt(countInput.value);
 		
-		var instance = BinaryKnapsack.generateInstance(capacity, count, randsW[0], randsW[1], randsV[0], randsV[1]);
-		solveAndPrint(instance);
+		instance = BinaryKnapsack.generateInstance(capacity, count, randsW[0], randsW[1], randsV[0], randsV[1]);
 	}
 	
-	public function calculate()
+	public function parseAndFromValues()
 	{
 		var weights = weightInput.value.split(",").map(function(f) return Std.parseInt(f));
 		var values = valueInput.value.split(",").map(function(f) return Std.parseInt(f));
@@ -64,16 +136,41 @@ class BrowserElements
 			Browser.alert("Bad arguments");
 			return;
 		}
-		var instance = BinaryKnapsack.initInstance(capacity, values, weights);
+		instance = BinaryKnapsack.initInstance(capacity, values, weights);
+	}
+	
+	public function calculate()
+	{
+		if (instance == null)
+			return;
 		solveAndPrint(instance);
+	}
+	
+	private function generateOneAndPrint()
+	{
+		if (testOnePara == null)
+		{
+			testOnePara = addParagraph();
+			Browser.document.body.appendChild(Browser.document.createHRElement());
+		}
+		var v = instance.generateRandomSolution();
+		testOnePara.textContent = "R: "+ v.value + "|| I: " + v.resultVector + " || W:" + v.weight;
 	}
 	
 	private function solveAndPrint(instance:BinaryKnapsack)
 	{
-		weightPara = addParagraph("Weights: " + instance.getWeightDebug());
-		valuePara = addParagraph("Values: " + instance.getValuesDebug());
+		if (weightPara == null)
+		{
+			resultPara = addParagraph();
+			weightPara = addParagraph();
+			valuePara = addParagraph();
+			Browser.document.body.appendChild(Browser.document.createHRElement());
+		}
+		
 		var result = DPKnapsack.solve(instance);
-		resultPara = addParagraph("Result: "+ DPKnapsack.solve(instance) + " || " + instance.evaluateValue(result));
+		resultPara.textContent = "Result: " + result.value + " || " + result.resultVector;
+		weightPara.textContent = "Weights: " + instance.getWeightDebug();
+		valuePara.textContent = "Values: " + instance.getValuesDebug();
 	}
 	
 	public function addButton(text:String,listener:Function):ButtonElement
@@ -94,7 +191,7 @@ class BrowserElements
 		return input;
 	}
 	
-	public function addParagraph(text:String):ParagraphElement
+	public function addParagraph(text:String = "yo"):ParagraphElement
 	{
 		var paragraph = Browser.document.createParagraphElement();
 		paragraph.textContent = text;
