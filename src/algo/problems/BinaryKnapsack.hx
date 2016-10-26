@@ -25,6 +25,16 @@ class BinaryKnapsack
 		return knapsack;
 	}
 	
+	public function averageItemValue ()
+	{
+		var sum = 0;
+		for (valye in values)
+		{
+			sum += valye;
+		}
+		return sum / values.length;
+	}
+	
 	public static function generateInstance(capacity:Int, numberOfItems:Int, weightBottom:Int, weightTop:Int, valueBottom:Int, valueTop:Int):BinaryKnapsack
 	{
 		var knapsack = new BinaryKnapsack();
@@ -76,6 +86,64 @@ class BinaryKnapsack
 			index++;
 		}
 		return new Result(v,valueSum,sum);
+	}
+	
+	public function generateNeighbour(current:Vector<Bool>):Result
+	{
+		var copyV = copyVec(current);
+		var result = null;
+		do
+		{
+			var indexToChange = Random.int(0, current.length - 1);
+			copyV[indexToChange] = !copyV[indexToChange];
+			result = fillResult(copyV);
+		}
+		while (result.weight > capacity);
+		return result;
+	}
+	
+	private function copyVec(items:Vector<Bool>):Vector<Bool>
+	{
+		var toReturn = new Vector<Bool>(items.length);
+		var index = 0;
+		for (item in items)
+		{
+			toReturn[index] = item;
+			index++;
+		}
+		return toReturn;
+	}
+	
+	public function fillResult(items:Vector<Bool>):Result
+	{
+		var sumV = 0;
+		var sumW = 0;
+		var index = 0;
+		for (item in items)
+		{
+			if (item)
+			{
+				sumW += weights[index];
+				sumV += values[index];
+			}
+			index++;
+		}
+		return new Result(items, sumV, sumW);
+	}
+	
+	public function evaluateWeight(items:Vector<Bool>):Int
+	{
+		var sum = 0;
+		var index = 0;
+		for (item in items)
+		{
+			if (item)
+			{
+				sum += weights[index];
+			}
+			index++;
+		}
+		return sum;
 	}
 	
 	public function evaluateValue(items:Vector<Bool>):Int

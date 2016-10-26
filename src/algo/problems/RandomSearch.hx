@@ -18,11 +18,11 @@ class RandomSearch
 	public function solve(iterations:Int, withHistory:Bool):Result
 	{
 		this.history = new Array<Int>();
-		var bestResult = new Result(new Vector<Bool>(1),-1);
+		var bestResult = knapsack.generateRandomSolution();
 		var index = 0;
 		while (index < iterations)
 		{
-			var tryV = knapsack.generateRandomSolution();
+			var tryV = knapsack.generateNeighbour(bestResult.resultVector);
 			if (tryV.value > bestResult.value)
 			{
 				bestResult = tryV;

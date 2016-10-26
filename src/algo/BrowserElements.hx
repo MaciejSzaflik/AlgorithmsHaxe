@@ -2,6 +2,7 @@ package algo;
 import algo.problems.BinaryKnapsack;
 import algo.problems.DPKnapsack;
 import algo.problems.RandomSearch;
+import algo.problems.SimulatedAnnaling;
 import haxe.Constraints.Function;
 import js.Browser;
 import js.html.ButtonElement;
@@ -20,6 +21,7 @@ class BrowserElements
 	
 	var testOnePara:ParagraphElement;
 	var randomSearchPara:ParagraphElement;
+	var saPara:ParagraphElement;
 	
 	var weightInput:InputElement;
 	var valueInput:InputElement;
@@ -68,9 +70,9 @@ class BrowserElements
 			creationDecide();
 			randomSearchInput();
         });
-		addButton("random search", function(event) {
+		addButton("sa", function(event) {
 			creationDecide();
-			randomSearchInput();
+			saInput();
         });
 	}
 	
@@ -94,8 +96,21 @@ class BrowserElements
 			randomSearchPara = addParagraph();
 			Browser.document.body.appendChild(Browser.document.createHRElement());
 		}
-		randomSearchPara.textContent = "R: " + result.value  + " || I: " + result.resultVector + " || W:" + result.weight;
+		randomSearchPara.textContent = "Random Search: " + result.value  + " || I: " + result.resultVector + " || W:" + result.weight;
 		fillGraphWithHistory(randomSearch.history);
+	}
+	public function saInput()
+	{
+		var iterations = Std.parseInt(iterationInput.value);
+		var sa = new SimulatedAnnaling(instance);
+		var result = sa.solve(iterations,true);
+		if (randomSearchPara == null)
+		{
+			saPara = addParagraph();
+			Browser.document.body.appendChild(Browser.document.createHRElement());
+		}
+		randomSearchPara.textContent = "SA: " + result.value  + " || I: " + result.resultVector + " || W:" + result.weight;
+		fillGraphWithHistory(sa.history);
 	}
 	
 	private function fillGraphWithHistory(history:Array<Int>)
@@ -121,7 +136,11 @@ class BrowserElements
 		var randsV = valueInput.value.split(",").map(function(f) return Std.parseInt(f));
 		var capacity = Std.parseInt(capacityInput.value);
 		var count = Std.parseInt(countInput.value);
-		
+		if (randsW[0] > capacity)
+		{
+			Browser.alert("cannot create such instance");
+			return;
+		}
 		instance = BinaryKnapsack.generateInstance(capacity, count, randsW[0], randsW[1], randsV[0], randsV[1]);
 	}
 	
