@@ -5,17 +5,16 @@ import haxe.ds.Vector;
  * ...
  * @author 
  */
-class RandomSearch
+class RandomSearch extends ProblemSolver
 {
-	var knapsack:BinaryKnapsack;
-	public var history:Array<Int>;
-	public function new(knapsack:BinaryKnapsack)
+	public var iterations:Int; 
+	public function new(iterations:Int,knapsack:BinaryKnapsack)
 	{
+		super();
 		this.knapsack = knapsack;
-		
+		this.iterations = iterations;
 	}
-	
-	public function solve(iterations:Int, withHistory:Bool):Result
+	public override function solve(withHistory:Bool):Result
 	{
 		this.history = new Array<Int>();
 		var bestResult = knapsack.generateRandomSolution();
@@ -33,5 +32,4 @@ class RandomSearch
 		}
 		return bestResult;
 	}
-	
 }

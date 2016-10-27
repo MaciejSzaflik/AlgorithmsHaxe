@@ -5,17 +5,17 @@ import haxe.ds.Vector;
  * ...
  * @author 
  */
-class SimulatedAnnaling
+class SimulatedAnnaling extends ProblemSolver
 {
-	var knapsack:BinaryKnapsack;
-	public var history:Array<Int>;
-	public function new(knapsack:BinaryKnapsack)
+	public var iterations:Int;
+	public function new(iterations:Int,knapsack:BinaryKnapsack)
 	{
+		super();
+		this.iterations = iterations;
 		this.knapsack = knapsack;
-		
 	}
 	
-	public function solve(iterations:Int, withHistory:Bool):Result
+	public override function solve(withHistory:Bool):Result
 	{
 		this.history = new Array<Int>();
 		var T = 1.0;

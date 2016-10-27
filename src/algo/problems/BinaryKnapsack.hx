@@ -90,7 +90,7 @@ class BinaryKnapsack
 	
 	public function generateNeighbour(current:Vector<Bool>):Result
 	{
-		var copyV = copyVec(current);
+		var copyV = Utils.copyVec(current);
 		var result = null;
 		do
 		{
@@ -100,18 +100,6 @@ class BinaryKnapsack
 		}
 		while (result.weight > capacity);
 		return result;
-	}
-	
-	private function copyVec(items:Vector<Bool>):Vector<Bool>
-	{
-		var toReturn = new Vector<Bool>(items.length);
-		var index = 0;
-		for (item in items)
-		{
-			toReturn[index] = item;
-			index++;
-		}
-		return toReturn;
 	}
 	
 	public function fillResult(items:Vector<Bool>):Result

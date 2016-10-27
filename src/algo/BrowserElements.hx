@@ -1,6 +1,8 @@
 package algo;
 import algo.problems.BinaryKnapsack;
 import algo.problems.DPKnapsack;
+import algo.problems.GeneticAlgorithm;
+import algo.problems.ProblemSolver;
 import algo.problems.RandomSearch;
 import algo.problems.SimulatedAnnaling;
 import haxe.Constraints.Function;
@@ -20,14 +22,16 @@ class BrowserElements
 	var resultPara:ParagraphElement;
 	
 	var testOnePara:ParagraphElement;
-	var randomSearchPara:ParagraphElement;
-	var saPara:ParagraphElement;
 	
 	var weightInput:InputElement;
 	var valueInput:InputElement;
 	var capacityInput:InputElement;
 	var countInput:InputElement;
 	var iterationInput:InputElement;
+	var populationInput:InputElement;
+	var mutatorInput:InputElement;
+	var reconbinatorInput:InputElement;
+	var terminatorInput:InputElement;
 	
 	var instance:BinaryKnapsack;
 	var checkboxGenerate:InputElement;
@@ -44,7 +48,11 @@ class BrowserElements
 		addParagraph("Elements Count (only for generation):");
 		countInput = addInputElement("5");
 		addParagraph("Iteration counter (only for meta):");
-		iterationInput = addInputElement("2000");
+		iterationInput = addInputElement("2000", 40);
+		populationInput = addInputElement("50",20);
+		mutatorInput = addInputElement("1.0",20);
+		reconbinatorInput = addInputElement("0.7",20);
+		terminatorInput = addInputElement("5",20);
 		
 		
 		Browser.document.body.appendChild(Browser.document.createHRElement());
@@ -68,11 +76,27 @@ class BrowserElements
         });
 		addButton("random search", function(event) {
 			creationDecide();
-			randomSearchInput();
+			var iterations = Std.parseInt(iterationInput.value);
+			var randomSearch = new RandomSearch(iterations,instance);
+			problemSolverStart("rand", randomSearch);
         });
 		addButton("sa", function(event) {
 			creationDecide();
-			saInput();
+			var iterations = Std.parseInt(iterationInput.value);
+			var sa = new SimulatedAnnaling(iterations,instance);
+			problemSolverStart("sa", sa);
+        });
+		
+		addButton("genetic", function(event) {
+			creationDecide();
+			
+			var pop = Std.parseInt(populationInput.value);
+			var mut = Std.parseFloat(mutatorInput.value);
+			var recon = Std.parseFloat(reconbinatorInput.value);
+			var ter = Std.parseInt(terminatorInput.value);
+			
+			var genetic = new GeneticAlgorithm(instance,pop,mut,recon,ter);
+			problemSolverStart("gen", genetic);
         });
 	}
 	
@@ -86,31 +110,14 @@ class BrowserElements
 			parseAndFromValues();
 	}
 	
-	public function randomSearchInput()
+	public function problemSolverStart(id:String,solver:ProblemSolver)
 	{
-		var iterations = Std.parseInt(iterationInput.value);
-		var randomSearch = new RandomSearch(instance);
-		var result = randomSearch.solve(iterations,true);
-		if (randomSearchPara == null)
-		{
-			randomSearchPara = addParagraph();
-			Browser.document.body.appendChild(Browser.document.createHRElement());
-		}
-		randomSearchPara.textContent = "Random Search: " + result.value  + " || I: " + result.resultVector + " || W:" + result.weight;
-		fillGraphWithHistory(randomSearch.history);
-	}
-	public function saInput()
-	{
-		var iterations = Std.parseInt(iterationInput.value);
-		var sa = new SimulatedAnnaling(instance);
-		var result = sa.solve(iterations,true);
-		if (randomSearchPara == null)
-		{
-			saPara = addParagraph();
-			Browser.document.body.appendChild(Browser.document.createHRElement());
-		}
-		randomSearchPara.textContent = "SA: " + result.value  + " || I: " + result.resultVector + " || W:" + result.weight;
-		fillGraphWithHistory(sa.history);
+		var result = solver.solve(true);
+		var para = addParagraph();
+		Browser.document.body.appendChild(Browser.document.createHRElement());
+		
+		para.textContent = "Solver: " + id + ": " + result.value  + " || I: " + result.resultVector + " || W:" + result.weight;
+		fillGraphWithHistory(solver.history);
 	}
 	
 	private function fillGraphWithHistory(history:Array<Int>)
@@ -201,10 +208,10 @@ class BrowserElements
 		return button;
 	}
 	
-	public function addInputElement(initial:String = "hello"):InputElement
+	public function addInputElement(initial:String = "hello",size:Int = 160):InputElement
 	{
 		var input = Browser.document.createInputElement();
-		input.size = 160;
+		input.size = size;
 		input.value = initial;
 		Browser.document.body.appendChild(input);
 		return input;
