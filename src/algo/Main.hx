@@ -13,7 +13,11 @@ class Main
 {
 	static function main() 
 	{
-		var browserElements = new BrowserElements();
+		
+		if (Browser.location.pathname.indexOf("index") != -1)
+			var browserElements = new BrowserElementsKnapsack();
+		else
+			var browserElements = new BrowserHanoi();
 	}
 	
 }

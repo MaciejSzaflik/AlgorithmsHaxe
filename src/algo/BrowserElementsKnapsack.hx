@@ -15,7 +15,7 @@ import js.html.ParagraphElement;
  * ...
  * @author 
  */
-class BrowserElements
+class BrowserElementsKnapsack
 {
 	var weightPara:ParagraphElement;
 	var valuePara:ParagraphElement;
@@ -38,28 +38,28 @@ class BrowserElements
 	var keepCreated:InputElement;
 	public function new() 
 	{
-		addButton("hanoi", function(event) {
+		Utils.addButton("hanoi", function(event) {
 			Browser.location.assign("/hanoi.html");
         });
 		
-		addParagraph("DP Binary Knapsack Solver");
-		addParagraph("Weights Input:");
-		weightInput = addInputElement("70, 73, 77, 80, 82, 87, 90, 94, 98, 106, 110, 113, 115, 118, 120");
-		addParagraph("Values Input:");
-		valueInput = addInputElement("135, 139, 149, 150, 156, 163, 173, 184, 192, 201, 210, 214, 221, 229, 240");
-		addParagraph("Capacity Input:");
-		capacityInput = addInputElement("750");
-		addParagraph("Elements Count (only for generation):");
-		countInput = addInputElement("5");
-		addParagraph("Iteration counter (only for meta):");
-		iterationInput = addInputElement("2000", 40);
-		populationInput = addInputElement("50",20);
-		mutatorInput = addInputElement("1.0",20);
-		reconbinatorInput = addInputElement("0.7",20);
-		terminatorInput = addInputElement("5",20);
+		Utils.addParagraph("DP Binary Knapsack Solver");
+		Utils.addParagraph("Weights Input:");
+		weightInput = Utils.addInputElement("70, 73, 77, 80, 82, 87, 90, 94, 98, 106, 110, 113, 115, 118, 120");
+		Utils.addParagraph("Values Input:");
+		valueInput = Utils.addInputElement("135, 139, 149, 150, 156, 163, 173, 184, 192, 201, 210, 214, 221, 229, 240");
+		Utils.addParagraph("Capacity Input:");
+		capacityInput = Utils.addInputElement("750");
+		Utils.addParagraph("Elements Count (only for generation):");
+		countInput = Utils.addInputElement("5");
+		Utils.addParagraph("Iteration counter (only for meta):");
+		iterationInput = Utils.addInputElement("2000", 40);
+		populationInput = Utils.addInputElement("50",20);
+		mutatorInput = Utils.addInputElement("1.0",20);
+		reconbinatorInput = Utils.addInputElement("0.7",20);
+		terminatorInput = Utils.addInputElement("5",20);
 		
 		Browser.document.body.appendChild(Browser.document.createHRElement());
-		addButton("calculate DP", function(event) {
+		Utils.addButton("calculate DP", function(event) {
 			creationDecide();
 			calculate();
         });
@@ -73,17 +73,17 @@ class BrowserElements
 		keepCreated.title = "keep";
 		Browser.document.body.appendChild(keepCreated);
 		
-		addButton("test", function(event) {
+		Utils.addButton("test", function(event) {
 			creationDecide();
 			generateOneAndPrint();
         });
-		addButton("random search", function(event) {
+		Utils.addButton("random search", function(event) {
 			creationDecide();
 			var iterations = Std.parseInt(iterationInput.value);
 			var randomSearch = new RandomSearch(iterations,instance);
 			problemSolverStart("rand", randomSearch);
         });
-		addButton("sa", function(event) {
+		Utils.addButton("sa", function(event) {
 			creationDecide();
 			var iterations = Std.parseInt(iterationInput.value);
 			var mut = Std.parseInt(populationInput.value);
@@ -91,7 +91,7 @@ class BrowserElements
 			problemSolverStart("sa", sa);
         });
 		
-		addButton("genetic", function(event) {
+		Utils.addButton("genetic", function(event) {
 			creationDecide();
 			
 			var pop = Std.parseInt(populationInput.value);
@@ -117,7 +117,7 @@ class BrowserElements
 	public function problemSolverStart(id:String,solver:ProblemSolver)
 	{
 		var result = solver.solve(true);
-		var para = addParagraph();
+		var para = Utils.addParagraph();
 		Browser.document.body.appendChild(Browser.document.createHRElement());
 		
 		para.textContent = "Solver: " + id + ": " + result.value  + " || I: " + result.resultVector + " || W:" + result.weight;
@@ -180,7 +180,7 @@ class BrowserElements
 	{
 		if (testOnePara == null)
 		{
-			testOnePara = addParagraph();
+			testOnePara = Utils.addParagraph();
 			Browser.document.body.appendChild(Browser.document.createHRElement());
 		}
 		var v = instance.generateRandomSolution();
@@ -191,9 +191,9 @@ class BrowserElements
 	{
 		if (weightPara == null)
 		{
-			resultPara = addParagraph();
-			weightPara = addParagraph();
-			valuePara = addParagraph();
+			resultPara = Utils.addParagraph();
+			weightPara = Utils.addParagraph();
+			valuePara = Utils.addParagraph();
 			Browser.document.body.appendChild(Browser.document.createHRElement());
 		}
 		
@@ -203,30 +203,5 @@ class BrowserElements
 		valuePara.textContent = "Values: " + instance.getValuesDebug();
 	}
 	
-	public function addButton(text:String,listener:Function):ButtonElement
-	{
-		var button = Browser.document.createButtonElement();
-        button.textContent = text;
-        button.onclick = listener;
-        Browser.document.body.appendChild(button);
-		return button;
-	}
-	
-	public function addInputElement(initial:String = "hello",size:Int = 160):InputElement
-	{
-		var input = Browser.document.createInputElement();
-		input.size = size;
-		input.value = initial;
-		Browser.document.body.appendChild(input);
-		return input;
-	}
-	
-	public function addParagraph(text:String = "yo"):ParagraphElement
-	{
-		var paragraph = Browser.document.createParagraphElement();
-		paragraph.textContent = text;
-		Browser.document.body.appendChild(paragraph);
-		return paragraph;
-	}
 	
 }
