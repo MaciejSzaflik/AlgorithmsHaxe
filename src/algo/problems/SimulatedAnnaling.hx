@@ -8,10 +8,12 @@ import haxe.ds.Vector;
 class SimulatedAnnaling extends ProblemSolver
 {
 	public var iterations:Int;
-	public function new(iterations:Int,knapsack:BinaryKnapsack)
+	public var neighourChanges:Int;
+	public function new(iterations:Int,neighourChanges:Int,knapsack:BinaryKnapsack)
 	{
 		super();
 		this.iterations = iterations;
+		this.neighourChanges = neighourChanges;
 		this.knapsack = knapsack;
 	}
 	
@@ -29,7 +31,7 @@ class SimulatedAnnaling extends ProblemSolver
 			var index = 0;
 			while (index < iterations)
 			{
-				var tryV = knapsack.generateNeighbour(currentResult.resultVector);
+				var tryV = knapsack.generateNeighbour(currentResult.resultVector,neighourChanges);
 				var ap = acceptancePropability(avergeValue, tryV.value, currentResult.value, T);
 				if (tryV.value > currentResult.value ||  ap > Math.random())
 				{

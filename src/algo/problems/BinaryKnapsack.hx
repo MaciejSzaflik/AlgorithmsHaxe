@@ -88,18 +88,20 @@ class BinaryKnapsack
 		return new Result(v,valueSum,sum);
 	}
 	
-	public function generateNeighbour(current:Vector<Bool>):Result
+	public function generateNeighbour(current:Vector<Bool>,number:Int):Result
 	{
 		var copyV = Utils.copyVec(current);
 		var result = null;
-		do
+		
+		var index = 0;
+		while (index < number)
 		{
 			var indexToChange = Random.int(0, current.length - 1);
 			copyV[indexToChange] = !copyV[indexToChange];
-			result = fillResult(copyV);
+			index++;
 		}
-		while (result.weight > capacity);
-		return result;
+		result = fillResult(copyV);
+		return recalculateResult(result);
 	}
 	
 	public function fillResult(items:Vector<Bool>):Result
@@ -118,6 +120,33 @@ class BinaryKnapsack
 		}
 		return new Result(items, sumV, sumW);
 	}
+	
+	public function recalculateResult(child:Result):Result
+	{
+		var index = 0;
+		var valueSum = 0;
+		var weightSum = 0;
+		while (index < child.resultVector.length)
+		{
+			if (child.resultVector[index])
+			{
+				if (weightSum + weights[index] > capacity)
+				{
+					child.resultVector[index] = false;
+				}
+				else
+				{
+					weightSum += weights[index];
+					valueSum += values[index];
+				}
+			}
+			index++;
+		}
+		child.weight = weightSum;
+		child.value = valueSum;
+		return child;
+	}
+	
 	
 	public function evaluateWeight(items:Vector<Bool>):Int
 	{

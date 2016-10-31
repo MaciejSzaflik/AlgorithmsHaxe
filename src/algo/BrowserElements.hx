@@ -38,6 +38,10 @@ class BrowserElements
 	var keepCreated:InputElement;
 	public function new() 
 	{
+		addButton("hanoi", function(event) {
+			Browser.location.assign("/hanoi.html");
+        });
+		
 		addParagraph("DP Binary Knapsack Solver");
 		addParagraph("Weights Input:");
 		weightInput = addInputElement("70, 73, 77, 80, 82, 87, 90, 94, 98, 106, 110, 113, 115, 118, 120");
@@ -53,7 +57,6 @@ class BrowserElements
 		mutatorInput = addInputElement("1.0",20);
 		reconbinatorInput = addInputElement("0.7",20);
 		terminatorInput = addInputElement("5",20);
-		
 		
 		Browser.document.body.appendChild(Browser.document.createHRElement());
 		addButton("calculate DP", function(event) {
@@ -83,7 +86,8 @@ class BrowserElements
 		addButton("sa", function(event) {
 			creationDecide();
 			var iterations = Std.parseInt(iterationInput.value);
-			var sa = new SimulatedAnnaling(iterations,instance);
+			var mut = Std.parseInt(populationInput.value);
+			var sa = new SimulatedAnnaling(iterations,mut,instance);
 			problemSolverStart("sa", sa);
         });
 		

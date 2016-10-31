@@ -21,10 +21,10 @@ class GeneticAlgorithm extends ProblemSolver
 	{
 		super();
 		this.knapsack = knapsack;
-		this.populationSize = 50;
+		this.populationSize = populationSize;
 		this.mutationProbability = 1.0 / knapsack.values.length *mutator;
-		this.recombinationProbability = 0.7;
-		this.termination = 5;
+		this.recombinationProbability = recombinationProbability;
+		this.termination = termination;
 		this.uselessGenerations = 0;
 	}
 	
@@ -113,38 +113,12 @@ class GeneticAlgorithm extends ProblemSolver
 	private function onChildPush(child:Result):Result
 	{
 		child = mutateChild(child);
-		child = recalculateChild(child);
+		child = knapsack.recalculateResult(child);
 		
 		if (child.value > allTimeBest.value)
 		{
 			allTimeBest = child;
 		}
-		return child;
-	}
-	
-	private function recalculateChild(child:Result):Result
-	{
-		var index = 0;
-		var valueSum = 0;
-		var weightSum = 0;
-		while (index < child.resultVector.length)
-		{
-			if (child.resultVector[index])
-			{
-				if (weightSum + knapsack.weights[index] > knapsack.capacity)
-				{
-					child.resultVector[index] = false;
-				}
-				else
-				{
-					weightSum += knapsack.weights[index];
-					valueSum += knapsack.values[index];
-				}
-			}
-			index++;
-		}
-		child.weight = weightSum;
-		child.value = valueSum;
 		return child;
 	}
 	

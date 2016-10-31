@@ -21,7 +21,7 @@ class RandomSearch extends ProblemSolver
 		var index = 0;
 		while (index < iterations)
 		{
-			var tryV = knapsack.generateNeighbour(bestResult.resultVector);
+			var tryV = knapsack.generateRandomSolution();
 			if (tryV.value > bestResult.value)
 			{
 				bestResult = tryV;
