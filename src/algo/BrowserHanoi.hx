@@ -1,5 +1,6 @@
 package algo;
 import algo.problems.hanoi.BFS;
+import algo.problems.hanoi.DFS;
 import algo.problems.hanoi.Hanoi;
 import haxe.ds.HashMap;
 import js.Browser;
@@ -27,6 +28,10 @@ class BrowserHanoi
 	
 	var bfsPar : ParagraphElement;
 	var bfsParAdditional : ParagraphElement;
+	
+	var dfsPar : ParagraphElement;
+	var dfsParAdditional : ParagraphElement;
+	
 	var hanoiSizeInput : InputElement;
 	public function new() 
 	{
@@ -59,6 +64,19 @@ class BrowserHanoi
 			bfsPar.textContent = "BFS: " + Std.string(bfs.findState(hanoi.generateEndStateId()));
 			bfsParAdditional.textContent = "BFS Nodes dicovered: " + bfs.counter;
         });
+		
+		Utils.addButton("dfs", function(event) {
+			var dfs = new DFS(Hanoi.createCopy(hanoi));
+			
+			if (dfsPar == null)
+				dfsPar = Utils.addParagraph();
+			if (dfsParAdditional == null)
+				dfsParAdditional = Utils.addParagraph();
+			
+			dfsPar.textContent = "DFS: " + Std.string(dfs.findState(hanoi.generateEndStateId()));
+			dfsParAdditional.textContent = "DFS Nodes dicovered: " + dfs.counter;
+        });
+		
 		Browser.document.body.appendChild(Browser.document.createHRElement());
 		
 		createCanvas();
