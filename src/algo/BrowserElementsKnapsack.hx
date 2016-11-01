@@ -1,10 +1,10 @@
 package algo;
-import algo.problems.BinaryKnapsack;
-import algo.problems.DPKnapsack;
-import algo.problems.GeneticAlgorithm;
-import algo.problems.ProblemSolver;
-import algo.problems.RandomSearch;
-import algo.problems.SimulatedAnnaling;
+import algo.problems.knapsack.BinaryKnapsack;
+import algo.problems.knapsack.DPKnapsack;
+import algo.problems.knapsack.GeneticAlgorithm;
+import algo.problems.knapsack.ProblemSolver;
+import algo.problems.knapsack.RandomSearch;
+import algo.problems.knapsack.SimulatedAnnaling;
 import haxe.Constraints.Function;
 import js.Browser;
 import js.html.ButtonElement;

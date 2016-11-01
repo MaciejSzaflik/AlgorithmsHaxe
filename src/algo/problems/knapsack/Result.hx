@@ -1,4 +1,4 @@
-package algo.problems;
+package algo.problems.knapsack;
 import haxe.ds.Vector;
 
 /**

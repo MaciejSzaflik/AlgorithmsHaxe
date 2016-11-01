@@ -1,7 +1,7 @@
 package algo;
 
-import algo.problems.BinaryKnapsack;
-import algo.problems.DPKnapsack;
+import algo.problems.knapsack.BinaryKnapsack;
+import algo.problems.knapsack.DPKnapsack;
 import js.Lib;
 import js.Browser;
 import js.html.HTMLCollection;

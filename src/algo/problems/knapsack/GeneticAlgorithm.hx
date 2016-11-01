@@ -1,5 +1,6 @@
-package algo.problems;
-import algo.problems.Result;
+package algo.problems.knapsack;
+import algo.problems.knapsack.Result;
+import algo.problems.knapsack.BinaryKnapsack;
 import haxe.ds.Vector;
 import js.html.rtc.IdentityAssertion;
 

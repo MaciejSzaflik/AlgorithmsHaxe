@@ -1,4 +1,7 @@
-package algo.problems;
+package algo.problems.knapsack;
+import algo.problems.knapsack.BinaryKnapsack;
+import algo.problems.knapsack.ProblemSolver;
+import algo.problems.knapsack.Result;
 import haxe.ds.Vector;
 
 /**
