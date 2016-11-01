@@ -1,7 +1,12 @@
 package algo;
+import algo.problems.hanoi.AStar;
 import algo.problems.hanoi.BFS;
 import algo.problems.hanoi.DFS;
 import algo.problems.hanoi.Hanoi;
+import algo.problems.hanoi.LargestMisplaced;
+import algo.problems.hanoi.LargestMisplacedPower;
+import algo.problems.hanoi.OnTopOfTheLargest;
+import algo.problems.hanoi.OtherThenLast;
 import haxe.ds.HashMap;
 import js.Browser;
 import js.html.ButtonElement;
@@ -33,12 +38,23 @@ class BrowserHanoi
 	var dfsParAdditional : ParagraphElement;
 	
 	var hanoiSizeInput : InputElement;
+	
+	var eval1 : ParagraphElement;
+	var eval2 : ParagraphElement;
+	var eval3 : ParagraphElement;
+	var eval4 : ParagraphElement;
+	
+	var astar_1 : ParagraphElement;
+	var astar_2 : ParagraphElement;
+	var astar_3 : ParagraphElement;
+	var astar_4 : ParagraphElement;
+	
 	public function new() 
 	{
 		taken = -1;
 		
 		Utils.addParagraph("Disc count:");
-		hanoiSizeInput = Utils.addInputElement("5");
+		hanoiSizeInput = Utils.addInputElement("5",20);
 		var createBut  = Utils.addButton("Create hanoi", function(event) {
 			createHanoi(Std.parseInt(hanoiSizeInput.value));
 			createHanoiButtons();
@@ -61,7 +77,8 @@ class BrowserHanoi
 			if (bfsParAdditional == null)
 				bfsParAdditional = Utils.addParagraph();
 			
-			bfsPar.textContent = "BFS: " + Std.string(bfs.findState(hanoi.generateEndStateId()));
+			var path = bfs.findState(hanoi.generateEndStateId());
+			bfsPar.textContent = "BFS: " + Std.string(path) + " len:" + path.length;
 			bfsParAdditional.textContent = "BFS Nodes dicovered: " + bfs.counter;
         });
 		
@@ -73,13 +90,72 @@ class BrowserHanoi
 			if (dfsParAdditional == null)
 				dfsParAdditional = Utils.addParagraph();
 			
-			dfsPar.textContent = "DFS: " + Std.string(dfs.findState(hanoi.generateEndStateId()));
+			var path = dfs.findState(hanoi.generateEndStateId());
+			dfsPar.textContent = "DFS: " + Std.string(path) + " len:" + path.length;
 			dfsParAdditional.textContent = "DFS Nodes dicovered: " + dfs.counter;
         });
+		
+		addAStarButton();
+		
 		
 		Browser.document.body.appendChild(Browser.document.createHRElement());
 		
 		createCanvas();
+	}
+	
+	private function addAStarButton()
+	{
+		Utils.addButton("A Star", function(event) {
+			var eval_0 = new OtherThenLast();
+			var eval_1 = new OnTopOfTheLargest();
+			var eval_2 = new LargestMisplaced();
+			var eval_3 = new LargestMisplacedPower();
+			
+			var astar_0_alg = new AStar(hanoi, eval_0);
+			var astar_1_alg = new AStar(hanoi, eval_1);
+			var astar_2_alg = new AStar(hanoi, eval_2);
+			var astar_3_alg = new AStar(hanoi, eval_3);
+			
+			if (astar_1 == null)
+			{
+				astar_1 = Utils.addParagraph();
+				astar_2 = Utils.addParagraph();
+				astar_3 = Utils.addParagraph();
+				astar_4 = Utils.addParagraph();
+			}
+			var path0 = astar_0_alg.solve(hanoi.generateEndStateId());
+			var path1 = astar_1_alg.solve(hanoi.generateEndStateId());
+			var path2 = astar_2_alg.solve(hanoi.generateEndStateId());
+			var path3 = astar_3_alg.solve(hanoi.generateEndStateId());
+			
+			astar_1.textContent = "OtherThenLast: " +  astar_0_alg.counter + " path: " + Std.string(path0) + " len:" + path0.length;
+			astar_2.textContent = "OnTopOfTheLargest: " +  astar_1_alg.counter + " path: " + Std.string(path1) + " len:" + path1.length;
+			astar_3.textContent = "LargestMisplaced: " +  astar_2_alg.counter + " path: " + Std.string(path2) + " len:" + path2.length;
+			astar_4.textContent = "LargestMisplacedPower: " +  astar_3_alg.counter + " path: " + Std.string(path3) + " len:" + path3.length;
+			
+        });
+	}
+	
+	
+	private function addAndUpdateEvaluators()
+	{
+		if (eval1 == null)
+		{
+			Browser.document.body.appendChild(Browser.document.createHRElement());
+			eval1 = Utils.addParagraph();
+			eval2 = Utils.addParagraph();
+			eval3 = Utils.addParagraph();
+			eval4 = Utils.addParagraph();
+			Browser.document.body.appendChild(Browser.document.createHRElement());
+		}
+		var eval_0 = new OtherThenLast();
+		eval1.textContent = "OTL: " + eval_0.evaluate(hanoi.state);
+		var eval_1 = new OnTopOfTheLargest();
+		eval2.textContent = "OnTL: " + eval_1.evaluate(hanoi.state);
+		var eval_2 = new LargestMisplaced();
+		eval3.textContent = "LM: " + eval_2.evaluate(hanoi.state);
+		var eval_3 = new LargestMisplacedPower();
+		eval4.textContent = "LMP: " + eval_3.evaluate(hanoi.state);
 	}
 	
 	private function createHanoiButtons()
@@ -134,6 +210,7 @@ class BrowserHanoi
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 		drawState(hanoi.state.values);
 		statePar.textContent = hanoi.state.generateStateId() + " " + Std.string(hanoi.generateValidMoves());
+		addAndUpdateEvaluators();
 	}
 	
 	

@@ -1,5 +1,6 @@
 package algo.problems.hanoi;
 import algo.Pair;
+import haxe.Constraints.Function;
 
 /**
  * ...
@@ -8,11 +9,15 @@ import algo.Pair;
 class HanoiState
 {
 	public var values : Array<List<Int>>;
-	public function new(copy : HanoiState) 
+	public var discNum : Int;
+	public function new(discNum : Int, copy : HanoiState) 
 	{
+		this.discNum = discNum;
 		values = new Array<List<Int>>();
+		
 		if (copy == null)
 			return;
+			
 		for (i in 0 ... copy.values.length)
 		{
 			values[i] = new List<Int>();
@@ -36,13 +41,13 @@ class HanoiState
 	
 	public static function createStart(pegs:Int, disc:Int):HanoiState
 	{
-		var state = new HanoiState(null);
+		var state = new HanoiState(disc,null);
 		for (i in 0 ... pegs)
 			state.values.push(new List<Int>());
 			
 		for (i in -disc ... 0)
 			state.values[0].push( -i);
-			
+		state.discNum = disc;
 		return state;
 	}
 	
@@ -63,5 +68,4 @@ class HanoiState
 	{
 		return a.generateStateId() == b.generateStateId();
 	}
-	
 }

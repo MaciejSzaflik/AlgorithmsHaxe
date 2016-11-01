@@ -23,7 +23,7 @@ class Hanoi
 	public static function createCopy(hanoi:Hanoi):Hanoi
 	{
 		var copy = new Hanoi(hanoi.rodNum, hanoi.discNum);
-		copy.state = new HanoiState(hanoi.state);
+		copy.state = new HanoiState(hanoi.discNum,hanoi.state);
 		return copy;
 	}
 	
@@ -47,7 +47,7 @@ class Hanoi
 		var states = new Array<HanoiState>();
 		for (pair in pairs)
 		{
-			var copy = new HanoiState(state);
+			var copy = new HanoiState(discNum,state);
 			copy.changeState(pair);
 			states.push(copy);
 		}
