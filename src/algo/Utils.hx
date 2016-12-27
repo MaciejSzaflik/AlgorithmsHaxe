@@ -4,7 +4,9 @@ import haxe.ds.Vector;
 import js.Browser;
 import js.html.ButtonElement;
 import js.html.InputElement;
+import js.html.OptionElement;
 import js.html.ParagraphElement;
+import js.html.SelectElement;
 /**
  * ...
  * @author 

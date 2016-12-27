@@ -12,12 +12,14 @@ class SimulatedAnnaling extends ProblemSolver
 {
 	public var iterations:Int;
 	public var neighourChanges:Int;
-	public function new(iterations:Int,neighourChanges:Int,knapsack:BinaryKnapsack)
+	public var alpha:Float;
+	public function new(iterations:Int,neighourChanges:Int,knapsack:BinaryKnapsack,alpha:Float = 0.9)
 	{
 		super();
 		this.iterations = iterations;
 		this.neighourChanges = neighourChanges;
 		this.knapsack = knapsack;
+		this.alpha = alpha;
 	}
 	
 	public override function solve(withHistory:Bool):Result
@@ -25,7 +27,6 @@ class SimulatedAnnaling extends ProblemSolver
 		this.history = new Array<Int>();
 		var T = 1.0;
 		var T_min = 0.00001;
-		var alpha = 0.9;
 		var currentResult = knapsack.generateRandomSolution();
 		var bestResult = new Result(new Vector<Bool>(1), -1);
 		var avergeValue = knapsack.averageItemValue();
@@ -47,6 +48,7 @@ class SimulatedAnnaling extends ProblemSolver
 					history.push(currentResult.value);
 			}
 			T = T * alpha;
+			trace(T);
 		}
 		return bestResult;
 	}

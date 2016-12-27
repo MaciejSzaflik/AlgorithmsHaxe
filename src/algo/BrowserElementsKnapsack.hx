@@ -6,10 +6,12 @@ import algo.problems.knapsack.ProblemSolver;
 import algo.problems.knapsack.RandomSearch;
 import algo.problems.knapsack.SimulatedAnnaling;
 import haxe.Constraints.Function;
+import haxe.Timer;
 import js.Browser;
 import js.html.ButtonElement;
 import js.html.InputElement;
 import js.html.ParagraphElement;
+import js.html.SelectElement;
 
 /**
  * ...
@@ -33,9 +35,15 @@ class BrowserElementsKnapsack
 	var reconbinatorInput:InputElement;
 	var terminatorInput:InputElement;
 	
+	var selectionSelector:SelectElement;
+	var crossingElementSelector:SelectElement;
+	
 	var instance:BinaryKnapsack;
 	var checkboxGenerate:InputElement;
 	var keepCreated:InputElement;
+	
+	var selectionCheckbox:InputElement;
+	var crossingCheckBox:InputElement;
 	public function new() 
 	{
 		Utils.addButton("hanoi", function(event) {
@@ -51,12 +59,26 @@ class BrowserElementsKnapsack
 		capacityInput = Utils.addInputElement("750");
 		Utils.addParagraph("Elements Count (only for generation):");
 		countInput = Utils.addInputElement("5");
-		Utils.addParagraph("Iteration counter (only for meta):");
+		Utils.addParagraph("Iterations:");
 		iterationInput = Utils.addInputElement("2000", 40);
-		populationInput = Utils.addInputElement("50",20);
-		mutatorInput = Utils.addInputElement("1.0",20);
-		reconbinatorInput = Utils.addInputElement("0.7",20);
-		terminatorInput = Utils.addInputElement("5",20);
+		Utils.addParagraph("Population/Neighors:");
+		populationInput = Utils.addInputElement("50", 20);
+		Utils.addParagraph("Mutator/Start temperature:");
+		mutatorInput = Utils.addInputElement("0.99", 20);
+		Utils.addParagraph("Reconbinator:");
+		reconbinatorInput = Utils.addInputElement("0.7", 20);
+		Utils.addParagraph("Terminator:");
+		terminatorInput = Utils.addInputElement("5", 20);
+		
+		selectionCheckbox = Browser.document.createInputElement();
+		selectionCheckbox.type = "checkbox";
+		selectionCheckbox.title = "selectionCheckbox";
+		Browser.document.body.appendChild(selectionCheckbox);
+		
+		crossingCheckBox = Utils.addInputElement("Uniform", 20);
+		crossingCheckBox.title = "crossingCheckBox";
+		Browser.document.body.appendChild(crossingCheckBox);
+		
 		
 		Browser.document.body.appendChild(Browser.document.createHRElement());
 		Utils.addButton("calculate DP", function(event) {
@@ -87,7 +109,8 @@ class BrowserElementsKnapsack
 			creationDecide();
 			var iterations = Std.parseInt(iterationInput.value);
 			var mut = Std.parseInt(populationInput.value);
-			var sa = new SimulatedAnnaling(iterations,mut,instance);
+			var b = Std.parseFloat(mutatorInput.value);
+			var sa = new SimulatedAnnaling(iterations,mut,instance,b);
 			problemSolverStart("sa", sa);
         });
 		
@@ -99,9 +122,32 @@ class BrowserElementsKnapsack
 			var recon = Std.parseFloat(reconbinatorInput.value);
 			var ter = Std.parseInt(terminatorInput.value);
 			
-			var genetic = new GeneticAlgorithm(instance,pop,mut,recon,ter);
+			var selection = selectionCheckbox.checked? SelectionType.Roulette : SelectionType.SimpleTournament;
+			var crossing = Type.createEnum(CrossingType,crossingCheckBox.value);
+			trace(selection);
+			trace(crossing);
+			var genetic = new GeneticAlgorithm(instance,pop,mut,recon,ter,crossing,selection);
 			problemSolverStart("gen", genetic);
         });
+		
+		Utils.addButton("test sa", function(event) {
+			
+			creationDecide();
+			var sum =  DPKnapsack.solve(instance).value;
+			var sumHeu = 0.0;
+			var sumTime = 0.0;
+				var iterations = Std.parseInt(iterationInput.value);
+				var a = Std.parseInt(populationInput.value);
+				var b = Std.parseFloat(mutatorInput.value);
+				
+				var stamp = Timer.stamp();
+				var sa = new SimulatedAnnaling(iterations, a, instance	, b);
+				var heurResult = sa.solve(false);
+				
+				
+				trace(sum+ ";"+ heurResult.value + ";" + (Timer.stamp() -stamp) + ";" + (heurResult.value/sum));
+				
+		});
 	}
 	
 	private function creationDecide()
